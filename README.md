@@ -113,4 +113,4 @@ Projeto criado para:
 
 ## 👨‍💻 Autor
 
-Desenvolvido por **Edu** 😏
+Desenvolvido por **José Eduardo Mota, AKA Eduardo Firenze.** 😏
