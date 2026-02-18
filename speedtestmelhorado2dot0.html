@@ -1,0 +1,131 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>SpeedTest by Edu</title>
+    <style>
+      body {
+        font-family: Arial, sans-serif;
+        background: #0f172a;
+        color: white;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        height: 100vh;
+        margin: 0;
+      }
+
+      .container {
+        background: #1e293b;
+        padding: 40px;
+        border-radius: 16px;
+        text-align: center;
+        box-shadow: 0 20px 40px rgba(0, 0, 0, 0.4);
+        width: 320px;
+      }
+
+      button {
+        background: #38bdf8;
+        border: none;
+        padding: 12px 24px;
+        border-radius: 8px;
+        font-size: 16px;
+        cursor: pointer;
+        font-weight: bold;
+      }
+
+      .results {
+        margin-top: 25px;
+        text-align: left;
+      }
+
+      p {
+        font-size: 18px;
+        margin: 10px 0;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <h1>Speed Test by Edu</h1>
+      <button onclick="runSpeedTest()">Internet speed</button>
+
+      <div class="results">
+        <p id="ping">Ping: --</p>
+        <p id="download">Download: --</p>
+        <p id="upload">Upload: --</p>
+      </div>
+
+      <script>
+        async function runSpeedTest() {
+          document.getElementById('ping').innerText = 'Ping: testando...';
+          const ping = await testPing();
+
+          document.getElementById('download').innerText =
+            'Download: testando...';
+          const download = await testDownload();
+
+          document.getElementById('upload').innerText = 'Upload: testando...';
+          const upload = await testUpload();
+
+          document.getElementById('ping').innerText = `Ping: ${ping} ms`;
+          document.getElementById('download').innerText =
+            `Download: ${download} Mbps;`;
+          document.getElementById('upload').innerText =
+            `Upload: ${upload} Mbps;`;
+        }
+
+        async function testPing() {
+          const startTime = performance.now();
+
+          await fetch('https://speed.cloudflare.com/__down?bytes=1', {
+            cache: 'no-store',
+          });
+
+          const endTime = performance.now();
+
+          return Math.round(endTime - startTime);
+        }
+
+        async function testDownload() {
+          const fileUrl = 'https://speed.cloudflare.com/__down?bytes=10000000';
+          const startTime = performance.now();
+
+          const response = await fetch(fileUrl, { cache: 'no-store' });
+          const data = await response.blob();
+
+          const endtTime = performance.now();
+
+          const duration = (endtTime - startTime) / 1000;
+
+          const fileSizeBytes = data.size;
+
+          const speedMbps = (fileSizeBytes * 8) / duration / (1024 * 1024);
+
+          return speedMbps.toFixed(2);
+        }
+
+        async function testUpload() {
+          const dataSize = 5 * 1024 * 1024;
+          const data = new Blob([new Uint8Array(dataSize)]);
+
+          const startTime = performance.now();
+
+          await fetch('https://httpbin.org/post', {
+            method: 'POST',
+            body: data,
+          });
+
+          const endTime = performance.now();
+
+          const duration = (endTime - startTime) / 1000;
+
+          const speedMbps = (dataSize * 8) / duration / (1024 * 1024);
+
+          return speedMbps.toFixed(2);
+        }
+      </script>
+    </div>
+  </body>
+</html>
